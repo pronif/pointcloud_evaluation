@@ -60,7 +60,7 @@ def run_evaluation():
     cropfile = DATASET_DIR + scene + '.json'
     alignment = DATASET_DIR + scene + '_trans.txt'
     # Output file folder
-    mvs_outpath = DATASET_DIR + scene + '/evaluation/'
+    mvs_outpath = DATASET_DIR + '/evaluation/'
     make_dir(mvs_outpath)
 
     #Load reconstruction and according GT
@@ -70,30 +70,36 @@ def run_evaluation():
     gt_pcd = read_point_cloud(gt_file)
 
     gt_trans = np.loadtxt(alignment)
-    traj_to_register = read_trajectory(new_logfile)
-    gt_traj_col = read_trajectory(colmap_ref_logfile)
-
-    trajectory_transform = trajectory_alignment(
-            traj_to_register, gt_traj_col, gt_trans)
-
-    # Refine alignment by using the actual GT and MVS pointclouds
-    vol = read_selection_polygon_volume(cropfile)
-    # big pointclouds will be downlsampled to this number to speed up alignment
+    # traj_to_register = read_trajectory(new_logfile)
+    # gt_traj_col = read_trajectory(colmap_ref_logfile)
+    #
+    # trajectory_transform = trajectory_alignment(
+    #         traj_to_register, gt_traj_col, gt_trans)
+    #
+    # # Refine alignment by using the actual GT and MVS pointclouds
+    # vol = read_selection_polygon_volume(cropfile)
+    # # big pointclouds will be downlsampled to this number to speed up alignment
     dist_threshold = dTau
+    #
+    # # Registration refinment in 3 iterations
+    # r2  = registration_vol_ds(pcd, gt_pcd,
+    #         trajectory_transform, vol, 3*dTau, dTau*120, 20)
+    # r3  = registration_vol_ds(pcd, gt_pcd,
+    #         r2.transformation, vol, 2*dTau, dTau*30, 20)
+    # r  = registration_unif(pcd, gt_pcd,
+    #         r3.transformation, vol, dTau*15, 20)
+    # r = r.transform
 
-    # Registration refinment in 3 iterations
-    r2  = registration_vol_ds(pcd, gt_pcd,
-            trajectory_transform, vol, 3*dTau, dTau*120, 20)
-    r3  = registration_vol_ds(pcd, gt_pcd,
-            r2.transformation, vol, 2*dTau, dTau*30, 20)
-    r  = registration_unif(pcd, gt_pcd,
-            r3.transformation, vol, dTau*15, 20)
+    # skip transformation refinement
+    r = gt_trans
+    # no crop volume
+    vol = []
 
     # Histogramms and P/R/F1
     plot_stretch = 5
     [precision, recall, fscore, edges_source, cum_source,
             edges_target, cum_target] = EvaluateHisto(
-            pcd, gt_pcd, r.transformation, vol, dTau/2.0, dTau,
+            pcd, gt_pcd, r, vol, dTau/2.0, dTau,
             mvs_outpath, plot_stretch, scene)
     eva = [precision, recall, fscore]
     print("==============================")
@@ -108,6 +114,7 @@ def run_evaluation():
     # Plotting
     plot_graph(scene, fscore, dist_threshold, edges_source, cum_source,
             edges_target, cum_target, plot_stretch, mvs_outpath)
+
 
 if __name__ == "__main__":
     run_evaluation()
