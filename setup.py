@@ -52,7 +52,7 @@
 #  - Ignatius_trans.txt			# Transformation matrix that aligns reference pose with ground truth
 # TanksAndTemples trainning dataset with this folder structure can be download from
 # https://drive.google.com/open?id=1VDHEqGAuLyGa7Bv3lGOr1KX2RhPbHLxw
-DATASET_DIR = None
+DATASET_DIR = "/home/v4rl/data/unreal_statue"
 
 # STEP 1) this evaluation script require Open3D python binding
 # to install Open3D, please start from http://open3d.org/docs/getting_started.html
@@ -62,21 +62,21 @@ DATASET_DIR = None
 # OPEN3D_BUILD_PATH = "C:/Open3D/build/" # Windows
 # OPEN3D_BUILD_PATH = "/Users/[user_id]/Open3D/build/" # Mac
 # OPEN3D_BUILD_PATH = "/home/[user_id]/Open3D/build/" # Ubuntu
-OPEN3D_BUILD_PATH = None
+OPEN3D_BUILD_PATH = "/hove/v4rl/repo/Open3d/build/"
 
 # STEP 3) specify path to where
 # py3d.so, py3d_[python_version].so or py3d.lib is located
 # For example, use one of these:
 # OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + "lib/Release/" # Windows
-# OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + "lib/" # Mac/Ubuntu
-OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + None
+OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + "lib/" # Mac/Ubuntu
+#OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + None
 
 # STEP 4) specify path to where
 # Open3D"s experimental applications (ViewDistances and ConvertPointCloud)
 # For example, use one of these
 # OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + "bin/Experimental/Release/" # Windows
-# OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + "bin/Experimental/" # Mac/Ubuntu
-OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + None
+OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + "bin/Experimental/" # Mac/Ubuntu
+#OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + None
 
 # STEP 5) Set the names for your reconstruction log and reconstruction files
 # For example, define MY_LOG_POSTFIX and MY_RECONSTRUCTION_POSTFIX like below:
@@ -84,8 +84,8 @@ OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + None
 # MY_RECONSTRUCTION_POSTFIX = "_your_reconstruction.ply"
 # and place _your_camera_poses.log and _your_reconstruction.ply in DATASET_DIR/Ignatius.
 # Do the same thing for other scenes.
-MY_LOG_POSTFIX = None
-MY_RECONSTRUCTION_POSTFIX = None
+RECONSTRUCTION_FILE = "reconstruction_sampled.ply"
+GROUND_TRUTH_FILE = "statue_ground_truth.ply"
 
 # ----------------------------------------------------------------------------
 # END OF INSTRUCTION
@@ -93,24 +93,24 @@ MY_RECONSTRUCTION_POSTFIX = None
 
 # some global parameters - do not modify
 scenes_tau_dict = {
-	"Barn": 0.01,
-	"Caterpillar": 0.005,
-	"Church": 0.025,
-	"Courthouse": 0.025,
-	"Ignatius": 0.003,
-	"Meetingroom": 0.01,
-	"Truck": 0.005}
+    "Barn": 0.01,
+    "Caterpillar": 0.005,
+    "Church": 0.025,
+    "Courthouse": 0.025,
+    "Ignatius": 0.003,
+    "Meetingroom": 0.01,
+    "Truck": 0.005}
 
 if OPEN3D_BUILD_PATH is None:
-	raise SystemExit("Error:: [OPEN3D_BUILD_PATH] in setup.py is not defined")
+    raise SystemExit("Error:: [OPEN3D_BUILD_PATH] in setup.py is not defined")
 if OPEN3D_PYTHON_LIBRARY_PATH is None:
-	raise SystemExit("Error:: [OPEN3D_PYTHON_LIBRARY_PATH] in setup.py is not defined")
+    raise SystemExit("Error:: [OPEN3D_PYTHON_LIBRARY_PATH] in setup.py is not defined")
 if OPEN3D_EXPERIMENTAL_BIN_PATH is None:
-	raise SystemExit("Error:: [OPEN3D_EXPERIMENTAL_BIN_PATH] in setup.py is not defined")
-if MY_LOG_POSTFIX is None:
-	raise SystemExit("Error:: [MY_LOG_POSTFIX] in setup.py is not defined")
-if MY_RECONSTRUCTION_POSTFIX is None:
-	raise SystemExit("Error:: [MY_RECONSTRUCTION_POSTFIX] in setup.py is not defined")
+    raise SystemExit("Error:: [OPEN3D_EXPERIMENTAL_BIN_PATH] in setup.py is not defined")
+if RECONSTRUCTION_FILE is None:
+    raise SystemExit("Error:: [RECONSTRUCTION_FILE] in setup.py is not defined")
+if GROUND_TRUTH_FILE is None:
+    raise SystemExit("Error:: [GROUND_TRUTH_FILE] in setup.py is not defined")
 
 import sys
 sys.path.append(OPEN3D_PYTHON_LIBRARY_PATH)
