@@ -55,8 +55,6 @@ def run_evaluation():
     # User input files
     recon_file = DATASET_DIR + RECONSTRUCTION_FILE
     gt_file = DATASET_DIR + GROUND_TRUTH_FILE
-    # for convenience, not used yet
-    cropfile = DATASET_DIR + scene + '.json'
     alignment = DATASET_DIR + scene + '_trans.txt'
     # Output file folder
     mvs_outpath = DATASET_DIR + '/evaluation/'
@@ -69,15 +67,6 @@ def run_evaluation():
     gt_pcd = read_point_cloud(gt_file)
 
     gt_trans = np.loadtxt(alignment)
-    # traj_to_register = read_trajectory(new_logfile)
-    # gt_traj_col = read_trajectory(colmap_ref_logfile)
-    #
-    # trajectory_transform = trajectory_alignment(
-    #         traj_to_register, gt_traj_col, gt_trans)
-    #
-    # # Refine alignment by using the actual GT and MVS pointclouds
-    # vol = read_selection_polygon_volume(cropfile)
-    # # big pointclouds will be downlsampled to this number to speed up alignment
     dist_threshold = dTau
 
     print(gt_trans)

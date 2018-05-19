@@ -28,10 +28,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # ----------------------------------------------------------------------------
-#
-# This python script is for downloading dataset from www.tanksandtemples.org
-# The dataset has a different license, please refer to
-# https://tanksandtemples.org/license/
 
 
 # ----------------------------------------------------------------------------
@@ -39,60 +35,32 @@
 # ----------------------------------------------------------------------------
 
 # STEP 0) Specify the path where training dataset folder is located.
-# Define DATASET_DIR like below:
-# DATASET_DIR = "C:/data/TanksAndTemples/evaluation/" # windows
-# DATASET_DIR = "/Users/[user_id]/data/TanksAndTemples/evaluation/" # Mac
-# DATASET_DIR = "/home/[user_id]/data/TanksAndTemples/evaluation/" # Ubuntu
-# Each dataset folder should have specific folder structure.
-# As an example, for "Ignatius" dataset,
-# Ignatius/
-#  - Ignatius.ply				# Ground truth geometry acquired by high-fidelity 3D Scanner
-#  - Ignatius.json 				# Area cropping information to limit spatial boundary for evaluation
-#  - Ignatius_COLMAP_SfM.log	# Reference camera pose obtained by successful reconstruction algorithm
-#  - Ignatius_trans.txt			# Transformation matrix that aligns reference pose with ground truth
-# TanksAndTemples trainning dataset with this folder structure can be download from
-# https://drive.google.com/open?id=1VDHEqGAuLyGa7Bv3lGOr1KX2RhPbHLxw
 DATASET_DIR = "/home/v4rl/data/unreal_statue/"
 
 # STEP 1) this evaluation script require Open3D python binding
 # to install Open3D, please start from http://open3d.org/docs/getting_started.html
 
 # STEP 2) specify path to where Open3D build is
-# Define OPEN3D_BUILD_PATH like below:
-# OPEN3D_BUILD_PATH = "C:/Open3D/build/" # Windows
-# OPEN3D_BUILD_PATH = "/Users/[user_id]/Open3D/build/" # Mac
-# OPEN3D_BUILD_PATH = "/home/[user_id]/Open3D/build/" # Ubuntu
 OPEN3D_BUILD_PATH = "/home/v4rl/repo/Open3D/build/"
 
 # STEP 3) specify path to where
 # py3d.so, py3d_[python_version].so or py3d.lib is located
-# For example, use one of these:
-# OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + "lib/Release/" # Windows
 OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + "lib/" # Mac/Ubuntu
-#OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + None
 
 # STEP 4) specify path to where
 # Open3D"s experimental applications (ViewDistances and ConvertPointCloud)
-# For example, use one of these
-# OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + "bin/Experimental/Release/" # Windows
 OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + "bin/Experimental/" # Mac/Ubuntu
-#OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + None
 
-# STEP 5) Set the names for your reconstruction log and reconstruction files
-# For example, define MY_LOG_POSTFIX and MY_RECONSTRUCTION_POSTFIX like below:
-# MY_LOG_POSTFIX = "_your_camera_poses.log"
-# MY_RECONSTRUCTION_POSTFIX = "_your_reconstruction.ply"
-# and place _your_camera_poses.log and _your_reconstruction.ply in DATASET_DIR/Ignatius.
-# Do the same thing for other scenes.
-RECONSTRUCTION_FILE = "recon_cropped.ply"
+# STEP 5) Set the names for ground truth and reconstruction pointclouds
 GROUND_TRUTH_FILE = "statue_ground_truth.ply"
+RECONSTRUCTION_FILE = "recon_cropped.ply"
 
 # ----------------------------------------------------------------------------
 # END OF INSTRUCTION
 # ----------------------------------------------------------------------------
 
 # TODO better way to read parameters
-# scene name : threshold for reconstruction
+# scene name, threshold for reconstruction
 scene = "unreal_statue"
 threshold = 0.1
 
