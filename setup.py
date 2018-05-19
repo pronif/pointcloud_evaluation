@@ -52,7 +52,7 @@
 #  - Ignatius_trans.txt			# Transformation matrix that aligns reference pose with ground truth
 # TanksAndTemples trainning dataset with this folder structure can be download from
 # https://drive.google.com/open?id=1VDHEqGAuLyGa7Bv3lGOr1KX2RhPbHLxw
-DATASET_DIR = "/home/v4rl/data/unreal_statue"
+DATASET_DIR = "/home/v4rl/data/unreal_statue/"
 
 # STEP 1) this evaluation script require Open3D python binding
 # to install Open3D, please start from http://open3d.org/docs/getting_started.html
@@ -62,7 +62,7 @@ DATASET_DIR = "/home/v4rl/data/unreal_statue"
 # OPEN3D_BUILD_PATH = "C:/Open3D/build/" # Windows
 # OPEN3D_BUILD_PATH = "/Users/[user_id]/Open3D/build/" # Mac
 # OPEN3D_BUILD_PATH = "/home/[user_id]/Open3D/build/" # Ubuntu
-OPEN3D_BUILD_PATH = "/hove/v4rl/repo/Open3d/build/"
+OPEN3D_BUILD_PATH = "/home/v4rl/repo/Open3D/build/"
 
 # STEP 3) specify path to where
 # py3d.so, py3d_[python_version].so or py3d.lib is located
@@ -91,15 +91,10 @@ GROUND_TRUTH_FILE = "statue_ground_truth.ply"
 # END OF INSTRUCTION
 # ----------------------------------------------------------------------------
 
-# some global parameters - do not modify
-scenes_tau_dict = {
-    "Barn": 0.01,
-    "Caterpillar": 0.005,
-    "Church": 0.025,
-    "Courthouse": 0.025,
-    "Ignatius": 0.003,
-    "Meetingroom": 0.01,
-    "Truck": 0.005}
+# TODO better way to read parameters
+# scene name : threshold for reconstruction
+scene = "unreal_statue"
+threshold = 0.01
 
 if OPEN3D_BUILD_PATH is None:
     raise SystemExit("Error:: [OPEN3D_BUILD_PATH] in setup.py is not defined")
