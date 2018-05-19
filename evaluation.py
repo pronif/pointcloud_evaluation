@@ -47,20 +47,20 @@ def read_alignment_transformation(filename):
 
 
 def EvaluateHisto(source, target, trans, crop_volume, voxel_size, threshold,
-        filename_mvs, plot_stretch, scene_name, verbose = True):
+                  filename_mvs, plot_stretch, scene_name, verbose=True):
     print("[EvaluateHisto]")
     set_verbosity_level(VerbosityLevel.Debug)
     s = copy.deepcopy(source)
     s.transform(trans)
-    #s = crop_volume.crop_point_cloud(s)
+    # s = crop_volume.crop_point_cloud(s)
     s = voxel_down_sample(s, voxel_size)
-    estimate_normals(s, search_param = KDTreeSearchParamKNN(knn = 20))
-    print(filename_mvs+"/" + scene_name + ".precision.ply")
+    estimate_normals(s, search_param=KDTreeSearchParamKNN(knn=20))
+    print(filename_mvs + "/" + scene_name + ".precision.ply")
 
     t = copy.deepcopy(target)
-    #t = crop_volume.crop_point_cloud(t)
+    # t = crop_volume.crop_point_cloud(t)
     t = voxel_down_sample(t, voxel_size)
-    estimate_normals(t, search_param = KDTreeSearchParamKNN(knn = 20))
+    estimate_normals(t, search_param=KDTreeSearchParamKNN(knn=20))
     print("[compute_point_cloud_to_point_cloud_distance]")
     distance1 = compute_point_cloud_to_point_cloud_distance(s, t)
     print("[compute_point_cloud_to_point_cloud_distance]")
@@ -68,61 +68,61 @@ def EvaluateHisto(source, target, trans, crop_volume, voxel_size, threshold,
 
     # write the distances to bin files
     np.array(distance1).astype('float64').tofile(
-            filename_mvs + "/" + scene_name + ".precision.bin")
+        filename_mvs + "/" + scene_name + ".precision.bin")
     np.array(distance2).astype('float64').tofile(
-            filename_mvs + "/" + scene_name + ".recall.bin")
+        filename_mvs + "/" + scene_name + ".recall.bin")
 
     # Colorize the poincloud files prith the precision and recall values
-    write_point_cloud(filename_mvs+"/" + scene_name + ".precision.ply", s)
-    write_point_cloud(filename_mvs+"/" + scene_name + ".precision.ncb.ply", s)
-    write_point_cloud(filename_mvs+"/" + scene_name + ".recall.ply", t)
+    write_point_cloud(filename_mvs + "/" + scene_name + ".precision.ply", s)
+    write_point_cloud(filename_mvs + "/" + scene_name + ".precision.ncb.ply", s)
+    write_point_cloud(filename_mvs + "/" + scene_name + ".recall.ply", t)
 
     source_n_fn = filename_mvs + "/" + scene_name + ".precision.ply"
     target_n_fn = filename_mvs + "/" + scene_name + ".recall.ply"
 
     print('[ViewDistances] Add color coding to visualize error')
     eval_str_viewDT = OPEN3D_EXPERIMENTAL_BIN_PATH + \
-            "ViewDistances " + source_n_fn + " --max_distance " + \
-            str(threshold*3) + " --write_color_back --without_gui"
+                      "ViewDistances " + source_n_fn + " --max_distance " + \
+                      str(threshold * 3) + " --write_color_back --without_gui"
     os.system(eval_str_viewDT)
 
     print('[ViewDistances] Add color coding to visualize error')
     eval_str_viewDT = OPEN3D_EXPERIMENTAL_BIN_PATH + \
-            "ViewDistances " + target_n_fn + " --max_distance " + \
-            str(threshold*3) + " --write_color_back --without_gui"
+                      "ViewDistances " + target_n_fn + " --max_distance " + \
+                      str(threshold * 3) + " --write_color_back --without_gui"
     os.system(eval_str_viewDT)
 
     # get histogram and f-score
     [precision, recall, fscore, edges_source, cum_source,
-            edges_target, cum_target] = get_f1_score_histo2(
-            threshold, filename_mvs, plot_stretch, distance1, distance2)
-    np.savetxt(filename_mvs+"/" + scene_name + ".recall.txt", cum_target)
-    np.savetxt(filename_mvs+"/" + scene_name + ".precision.txt", cum_source)
-    np.savetxt(filename_mvs+"/" + scene_name + ".prf_tau_plotstr.txt",
-            np.array([precision, recall, fscore, threshold, plot_stretch]))
+     edges_target, cum_target] = get_f1_score_histo2(
+        threshold, filename_mvs, plot_stretch, distance1, distance2)
+    np.savetxt(filename_mvs + "/" + scene_name + ".recall.txt", cum_target)
+    np.savetxt(filename_mvs + "/" + scene_name + ".precision.txt", cum_source)
+    np.savetxt(filename_mvs + "/" + scene_name + ".prf_tau_plotstr.txt",
+               np.array([precision, recall, fscore, threshold, plot_stretch]))
 
     return [precision, recall, fscore, edges_source,
             cum_source, edges_target, cum_target]
 
 
 def get_f1_score_histo2(threshold, filename_mvs,
-        plot_stretch, distance1, distance2, verbose = True):
+                        plot_stretch, distance1, distance2, verbose=True):
     print("[get_f1_score_histo2]")
     dist_threshold = threshold
-    if(len(distance1) and len(distance2)):
+    if (len(distance1) and len(distance2)):
 
         recall = float(sum(d < threshold for d in distance2)) / \
-                float(len(distance2))
+                 float(len(distance2))
         precision = float(sum(d < threshold for d in distance1)) / \
-                float(len(distance1))
+                    float(len(distance1))
         fscore = 2 * recall * precision / (recall + precision)
         num = len(distance1)
-        bins = np.arange(0, dist_threshold*plot_stretch , dist_threshold / 100)
+        bins = np.arange(0, dist_threshold * plot_stretch, dist_threshold / 100)
         hist, edges_source = np.histogram(distance1, bins)
         cum_source = np.cumsum(hist).astype(float) / num
 
         num = len(distance2)
-        bins = np.arange(0, dist_threshold*plot_stretch , dist_threshold / 100)
+        bins = np.arange(0, dist_threshold * plot_stretch, dist_threshold / 100)
         hist, edges_target = np.histogram(distance2, bins)
         cum_target = np.cumsum(hist).astype(float) / num
 

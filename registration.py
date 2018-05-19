@@ -46,9 +46,9 @@ def trajectory_alignment(traj_to_register, gt_traj_col, gt_trans):
     traj_pcd_col.transform(gt_trans)
 
     corres = Vector2iVector(np.asarray(
-            list(map(lambda x: [x, x], range(len(gt_traj_col))))))
+        list(map(lambda x: [x, x], range(len(gt_traj_col))))))
 
-    rr=RANSACConvergenceCriteria()
+    rr = RANSACConvergenceCriteria()
     rr.max_iteration = 100000
     rr.max_validation = 100000
 
@@ -59,13 +59,13 @@ def trajectory_alignment(traj_to_register, gt_traj_col, gt_trans):
         traj_to_register_pcd = convert_trajectory_to_pointcloud(traj_col2)
     else:
         traj_to_register_pcd = convert_trajectory_to_pointcloud(
-                traj_to_register)
+            traj_to_register)
 
-    #randomvar = 0.05 # 5% error added
+    # randomvar = 0.05 # 5% error added
     randomvar = 0.0
     nr_of_cam_pos = len(traj_to_register_pcd.points)
     rand_number_added = np.asanyarray(traj_to_register_pcd.points) * \
-            (np.random.rand(nr_of_cam_pos,3)*randomvar-randomvar/2.0+1)
+                        (np.random.rand(nr_of_cam_pos, 3) * randomvar - randomvar / 2.0 + 1)
     list_rand = list(rand_number_added)
     traj_to_register_pcd_rand = PointCloud()
     for elem in list_rand:
@@ -73,55 +73,55 @@ def trajectory_alignment(traj_to_register, gt_traj_col, gt_trans):
 
     # Rough registration based on aligned colmap SfM data
     reg = registration_ransac_based_on_correspondence(
-            traj_to_register_pcd_rand, traj_pcd_col, corres, 0.2,
-            TransformationEstimationPointToPoint(True),6, rr)
+        traj_to_register_pcd_rand, traj_pcd_col, corres, 0.2,
+        TransformationEstimationPointToPoint(True), 6, rr)
     return reg.transformation
 
 
 def downsample(pcd, down_sample_method='voxel',
-                        voxel_size=0.01, trans=np.identity(4)):
+               voxel_size=0.01, trans=np.identity(4)):
     pcd_copy = copy.deepcopy(pcd)
     pcd_copy.transform(trans)
     if down_sample_method == 'voxel':
         return voxel_down_sample(pcd_copy, voxel_size)
     elif down_sample_method == 'uniform':
         n_points = len(pcd_copy.points)
-        if(n_points > MAX_POINT_NUMBER):
-            ds_rate = int(round(n_points/float(MAX_POINT_NUMBER)))
+        if (n_points > MAX_POINT_NUMBER):
+            ds_rate = int(round(n_points / float(MAX_POINT_NUMBER)))
             return uniform_down_sample(pcd_copy, ds_rate)
     return pcd_copy
 
 
 def registration_unif(source, gt_target, init_trans,
-        threshold, max_itr, max_size = 4*MAX_POINT_NUMBER,
-        verbose = True):
+                      threshold, max_itr, max_size=4 * MAX_POINT_NUMBER,
+                      verbose=True):
     if verbose:
         print("[Registration] threshold: %f" % threshold)
         set_verbosity_level(VerbosityLevel.Debug)
 
     s = downsample(source, down_sample_method='uniform',
-                            trans=init_trans)
+                   trans=init_trans)
     t = downsample(gt_target,
-            down_sample_method='uniform')
+                   down_sample_method='uniform')
     reg = registration_icp(s, t, threshold, np.identity(4),
-            TransformationEstimationPointToPoint(True),
-            ICPConvergenceCriteria(1e-6, max_itr))
+                           TransformationEstimationPointToPoint(True),
+                           ICPConvergenceCriteria(1e-6, max_itr))
     reg.transformation = np.matmul(reg.transformation, init_trans)
     return reg
 
 
 def registration_vol_ds(source, gt_target, init_trans,
-        voxel_size, threshold, max_itr, verbose=True):
+                        voxel_size, threshold, max_itr, verbose=True):
     if verbose:
         print("[Registration] voxel_size: %f, threshold: %f"
-                % (voxel_size, threshold))
+              % (voxel_size, threshold))
         set_verbosity_level(VerbosityLevel.Debug)
     s = downsample(source,
-            down_sample_method='voxel', trans=init_trans)
+                   down_sample_method='voxel', trans=init_trans)
     t = downsample(gt_target,
-            down_sample_method='voxel')
+                   down_sample_method='voxel')
     reg = registration_icp(s, t, threshold, np.identity(4),
-            TransformationEstimationPointToPoint(True),
-            ICPConvergenceCriteria(1e-6, max_itr))
+                           TransformationEstimationPointToPoint(True),
+                           ICPConvergenceCriteria(1e-6, max_itr))
     reg.transformation = np.matmul(reg.transformation, init_trans)
     return reg
