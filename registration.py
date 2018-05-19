@@ -78,31 +78,30 @@ def trajectory_alignment(traj_to_register, gt_traj_col, gt_trans):
     return reg.transformation
 
 
-def crop_and_downsample(pcd, crop_volume,
-        down_sample_method='voxel', voxel_size=0.01, trans=np.identity(4)):
+def downsample(pcd, down_sample_method='voxel',
+                        voxel_size=0.01, trans=np.identity(4)):
     pcd_copy = copy.deepcopy(pcd)
     pcd_copy.transform(trans)
-    pcd_crop = crop_volume.crop_point_cloud(pcd_copy)
     if down_sample_method == 'voxel':
-        return voxel_down_sample(pcd_crop, voxel_size)
+        return voxel_down_sample(pcd_copy, voxel_size)
     elif down_sample_method == 'uniform':
-        n_points = len(pcd_crop.points)
+        n_points = len(pcd_copy.points)
         if(n_points > MAX_POINT_NUMBER):
             ds_rate = int(round(n_points/float(MAX_POINT_NUMBER)))
-            return uniform_down_sample(pcd_crop, ds_rate)
-    return pcd_crop
+            return uniform_down_sample(pcd_copy, ds_rate)
+    return pcd_copy
 
 
 def registration_unif(source, gt_target, init_trans,
-        crop_volume, threshold, max_itr, max_size = 4*MAX_POINT_NUMBER,
+        threshold, max_itr, max_size = 4*MAX_POINT_NUMBER,
         verbose = True):
     if verbose:
         print("[Registration] threshold: %f" % threshold)
         set_verbosity_level(VerbosityLevel.Debug)
 
-    s = crop_and_downsample(source, crop_volume,
-            down_sample_method='uniform', trans=init_trans)
-    t = crop_and_downsample(gt_target, crop_volume,
+    s = downsample(source, down_sample_method='uniform',
+                            trans=init_trans)
+    t = downsample(gt_target,
             down_sample_method='uniform')
     reg = registration_icp(s, t, threshold, np.identity(4),
             TransformationEstimationPointToPoint(True),
@@ -112,15 +111,14 @@ def registration_unif(source, gt_target, init_trans,
 
 
 def registration_vol_ds(source, gt_target, init_trans,
-        crop_volume, voxel_size, threshold, max_itr,
-        verbose = True):
+        voxel_size, threshold, max_itr, verbose=True):
     if verbose:
         print("[Registration] voxel_size: %f, threshold: %f"
                 % (voxel_size, threshold))
         set_verbosity_level(VerbosityLevel.Debug)
-    s = crop_and_downsample(source, crop_volume,
+    s = downsample(source,
             down_sample_method='voxel', trans=init_trans)
-    t = crop_and_downsample(gt_target, crop_volume,
+    t = downsample(gt_target,
             down_sample_method='voxel')
     reg = registration_icp(s, t, threshold, np.identity(4),
             TransformationEstimationPointToPoint(True),

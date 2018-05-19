@@ -80,18 +80,22 @@ def run_evaluation():
     # vol = read_selection_polygon_volume(cropfile)
     # # big pointclouds will be downlsampled to this number to speed up alignment
     dist_threshold = dTau
-    #
-    # # Registration refinment in 3 iterations
-    # r2  = registration_vol_ds(pcd, gt_pcd,
-    #         trajectory_transform, vol, 3*dTau, dTau*120, 20)
-    # r3  = registration_vol_ds(pcd, gt_pcd,
-    #         r2.transformation, vol, 2*dTau, dTau*30, 20)
-    # r  = registration_unif(pcd, gt_pcd,
-    #         r3.transformation, vol, dTau*15, 20)
-    # r = r.transform
+
+    print(gt_trans)
+    # Registration refinment in 3 iterations
+    r2  = registration_vol_ds(pcd, gt_pcd,
+            gt_trans, 3*dTau, dTau*120, 20)
+    print(r2.transformation)
+    r3  = registration_vol_ds(pcd, gt_pcd,
+             r2.transformation, 2*dTau, dTau*30, 20)
+    print(r3.transformation)
+    r  = registration_unif(pcd, gt_pcd,
+             r3.transformation, dTau*15, 20)
+    r = r.transformation
+    print(r)
 
     # skip transformation refinement
-    r = gt_trans
+    # r = gt_trans
     # no crop volume
     vol = []
 
