@@ -45,9 +45,10 @@ from plot import *
 
 
 def run_evaluation():
+    scene_name = DATASET_DIR.split("/")[-2]
     print("")
     print("===========================")
-    print("Evaluating %s" % scene)
+    print("Evaluating %s" % scene_name)
     print("===========================")
 
     dTau = threshold
@@ -55,7 +56,7 @@ def run_evaluation():
     # User input files
     recon_file = DATASET_DIR + RECONSTRUCTION_FILE
     gt_file = DATASET_DIR + GROUND_TRUTH_FILE
-    alignment = DATASET_DIR + scene + '_trans.txt'
+    transformation_file = DATASET_DIR + TRANSFORMATION_FILE
     # Output file folder
     mvs_outpath = DATASET_DIR + '/evaluation/'
     make_dir(mvs_outpath)
@@ -66,21 +67,20 @@ def run_evaluation():
     print(gt_file)
     gt_pcd = read_point_cloud(gt_file)
 
-    gt_trans = np.loadtxt(alignment)
+    gt_trans = np.loadtxt(transformation_file)
     dist_threshold = dTau
 
-    print(gt_trans)
-    # Registration refinment in 3 iterations
-    r2 = registration_vol_ds(pcd, gt_pcd,
-                             gt_trans, 3 * dTau, dTau * 120, 20)
-    print(r2.transformation)
-    r3 = registration_vol_ds(pcd, gt_pcd,
-                             r2.transformation, 2 * dTau, dTau * 30, 20)
-    print(r3.transformation)
-    r = registration_unif(pcd, gt_pcd,
-                          r3.transformation, dTau * 15, 20)
-    r = r.transformation
-    print(r)
+    if(do_ICP):
+        # Registration refinement in 3 iterations
+        r2 = registration_vol_ds(pcd, gt_pcd,
+                                 gt_trans, 3 * dTau, dTau * 120, 20)
+        r3 = registration_vol_ds(pcd, gt_pcd,
+                                 r2.transformation, 2 * dTau, dTau * 30, 20)
+        r = registration_unif(pcd, gt_pcd,
+                              r3.transformation, dTau * 15, 20)
+        r = r.transformation
+    else:
+        r = gt_trans
 
     # skip transformation refinement
     # r = gt_trans
@@ -92,10 +92,10 @@ def run_evaluation():
     [precision, recall, fscore, edges_source, cum_source,
      edges_target, cum_target] = EvaluateHisto(
         pcd, gt_pcd, r, vol, dTau / 2.0, dTau,
-        mvs_outpath, plot_stretch, scene)
+        mvs_outpath, plot_stretch, scene_name)
     eva = [precision, recall, fscore]
     print("==============================")
-    print("evaluation result : %s" % scene)
+    print("evaluation result : %s" % scene_name)
     print("==============================")
     print("distance tau : %.3f" % dTau)
     print("precision : %.4f" % eva[0])
@@ -104,7 +104,7 @@ def run_evaluation():
     print("==============================")
 
     # Plotting
-    plot_graph(scene, fscore, dist_threshold, edges_source, cum_source,
+    plot_graph(scene_name, fscore, dist_threshold, edges_source, cum_source,
                edges_target, cum_target, plot_stretch, mvs_outpath)
 
 

@@ -55,14 +55,16 @@ OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + "bin/Experimental/" # Mac/Ubu
 GROUND_TRUTH_FILE = "statue_ground_truth.ply"
 RECONSTRUCTION_FILE = "recon_cropped.ply"
 
+# STEP 5) Set the names for the transformation file from ground truth to reconstructed pointcloud
+TRANSFORMATION_FILE = "unreal_statue_trans.txt"
+
+# STEP 6) Set the evaluation parameters
+threshold = 0.1
+do_ICP = False
+
 # ----------------------------------------------------------------------------
 # END OF INSTRUCTION
 # ----------------------------------------------------------------------------
-
-# TODO better way to read parameters
-# scene name, threshold for reconstruction
-scene = "unreal_statue"
-threshold = 0.1
 
 if OPEN3D_BUILD_PATH is None:
     raise SystemExit("Error:: [OPEN3D_BUILD_PATH] in setup.py is not defined")
