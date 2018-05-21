@@ -56,6 +56,7 @@ GROUND_TRUTH_FILE = "statue_ground_truth.ply"
 RECONSTRUCTION_FILE = "recon_cropped.ply"
 
 # STEP 5) Set the names for the transformation file from ground truth to reconstructed pointcloud
+# if None, assume identity
 TRANSFORMATION_FILE = "unreal_statue_trans.txt"
 
 # STEP 6) Set the evaluation parameters

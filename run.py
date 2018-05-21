@@ -66,8 +66,10 @@ def run_evaluation():
     pcd = read_point_cloud(recon_file)
     print(gt_file)
     gt_pcd = read_point_cloud(gt_file)
-
-    gt_trans = np.loadtxt(transformation_file)
+    if TRANSFORMATION_FILE is None:
+        gt_trans = np.eyes(4)
+    else:
+        gt_trans = np.loadtxt(transformation_file)
     dist_threshold = dTau
 
     if(do_ICP):
