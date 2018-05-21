@@ -35,7 +35,7 @@
 # ----------------------------------------------------------------------------
 
 # STEP 0) Specify the path where training dataset folder is located.
-DATASET_DIR = "/home/v4rl/data/unreal_statue/"
+DATASET_DIR = "/home/v4rl/data/unreal_statue2/"
 
 # STEP 1) this evaluation script require Open3D python binding
 # to install Open3D, please start from http://open3d.org/docs/getting_started.html
@@ -52,12 +52,12 @@ OPEN3D_PYTHON_LIBRARY_PATH = OPEN3D_BUILD_PATH + "lib/" # Mac/Ubuntu
 OPEN3D_EXPERIMENTAL_BIN_PATH = OPEN3D_BUILD_PATH + "bin/Experimental/" # Mac/Ubuntu
 
 # STEP 5) Set the names for ground truth and reconstruction pointclouds
-GROUND_TRUTH_FILE = "statue_ground_truth.ply"
-RECONSTRUCTION_FILE = "recon_cropped.ply"
+GROUND_TRUTH_FILE = "ground_truth_subsampled.ply"
+RECONSTRUCTION_FILE = "reconstruction_cropped.ply"
 
 # STEP 5) Set the names for the transformation file from ground truth to reconstructed pointcloud
 # if None, assume identity
-TRANSFORMATION_FILE = "unreal_statue_trans.txt"
+TRANSFORMATION_FILE = None
 
 # STEP 6) Set the evaluation parameters
 threshold = 0.1

@@ -56,7 +56,6 @@ def run_evaluation():
     # User input files
     recon_file = DATASET_DIR + RECONSTRUCTION_FILE
     gt_file = DATASET_DIR + GROUND_TRUTH_FILE
-    transformation_file = DATASET_DIR + TRANSFORMATION_FILE
     # Output file folder
     mvs_outpath = DATASET_DIR + '/evaluation/'
     make_dir(mvs_outpath)
@@ -67,8 +66,9 @@ def run_evaluation():
     print(gt_file)
     gt_pcd = read_point_cloud(gt_file)
     if TRANSFORMATION_FILE is None:
-        gt_trans = np.eyes(4)
+        gt_trans = np.eye(4)
     else:
+        transformation_file = DATASET_DIR + TRANSFORMATION_FILE
         gt_trans = np.loadtxt(transformation_file)
     dist_threshold = dTau
 
