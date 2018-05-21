@@ -34,49 +34,10 @@
 # https://tanksandtemples.org/license/
 
 from setup import *
-from trajectory_io import *
 import copy
 import numpy as np
 
 MAX_POINT_NUMBER = 4e6
-
-
-def trajectory_alignment(traj_to_register, gt_traj_col, gt_trans):
-    traj_pcd_col = convert_trajectory_to_pointcloud(gt_traj_col)
-    traj_pcd_col.transform(gt_trans)
-
-    corres = Vector2iVector(np.asarray(
-        list(map(lambda x: [x, x], range(len(gt_traj_col))))))
-
-    rr = RANSACConvergenceCriteria()
-    rr.max_iteration = 100000
-    rr.max_validation = 100000
-
-    # in this case a log file was used which contains
-    # every movie frame (see tutorial for details)
-    if len(traj_to_register) > 1600:
-        traj_col2 = gen_sparse_trajectory(mapping, traj_to_register)
-        traj_to_register_pcd = convert_trajectory_to_pointcloud(traj_col2)
-    else:
-        traj_to_register_pcd = convert_trajectory_to_pointcloud(
-            traj_to_register)
-
-    # randomvar = 0.05 # 5% error added
-    randomvar = 0.0
-    nr_of_cam_pos = len(traj_to_register_pcd.points)
-    rand_number_added = np.asanyarray(traj_to_register_pcd.points) * \
-                        (np.random.rand(nr_of_cam_pos, 3) * randomvar - randomvar / 2.0 + 1)
-    list_rand = list(rand_number_added)
-    traj_to_register_pcd_rand = PointCloud()
-    for elem in list_rand:
-        traj_to_register_pcd_rand.points.append(elem)
-
-    # Rough registration based on aligned colmap SfM data
-    reg = registration_ransac_based_on_correspondence(
-        traj_to_register_pcd_rand, traj_pcd_col, corres, 0.2,
-        TransformationEstimationPointToPoint(True), 6, rr)
-    return reg.transformation
-
 
 def downsample(pcd, down_sample_method='voxel',
                voxel_size=0.01, trans=np.identity(4)):
